@@ -7,7 +7,7 @@
 <img src="https://img.shields.io/github/forks/haiibo/OpenWrt.svg?style=for-the-badge&color=ff69b4"/>
 <img src="https://img.shields.io/github/license/haiibo/OpenWrt.svg?style=for-the-badge&color=blueviolet"/>
 
-[![](https://img.shields.io/badge/-目录:-696969.svg)](#readme) [![](https://img.shields.io/badge/-项目说明-FFFFFF.svg)](#项目说明-) [![](https://img.shields.io/badge/-固件下载-FFFFFF.svg)](#固件下载-) [![](https://img.shields.io/badge/-近期更新-FFFFFF.svg)](#近期更新-) [![](https://img.shields.io/badge/-插件预览-FFFFFF.svg)](#插件预览-) [![](https://img.shields.io/badge/-编译教程-FFFFFF.svg)](#编译教程-) [![](https://img.shields.io/badge/-特别提示-FFFFFF.svg)](#特别提示-) [![](https://img.shields.io/badge/-捐助项目-FFFFFF.svg)](#捐助项目-) [![](https://img.shields.io/badge/-鸣谢-FFFFFF.svg)](#鸣谢-)
+[![](https://img.shields.io/badge/-目录:-696969.svg)](#readme) [![](https://img.shields.io/badge/-项目说明-FFFFFF.svg)](#项目说明-) [![](https://img.shields.io/badge/-固件下载-FFFFFF.svg)](#固件下载-) [![](https://img.shields.io/badge/-近期更新-FFFFFF.svg)](#近期更新-) [![](https://img.shields.io/badge/-插件预览-FFFFFF.svg)](#插件预览-) [![](https://img.shields.io/badge/-编译教程-FFFFFF.svg)](#编译教程-) [![](https://img.shields.io/badge/-文件说明-FFFFFF.svg)](#文件说明-) [![](https://img.shields.io/badge/-特别提示-FFFFFF.svg)](#特别提示-) [![](https://img.shields.io/badge/-捐助项目-FFFFFF.svg)](#捐助项目-) [![](https://img.shields.io/badge/-鸣谢-FFFFFF.svg)](#鸣谢-)
 </div>
 
 
@@ -194,13 +194,94 @@
 
 ## 编译教程 [![](https://img.shields.io/badge/-项目基本编译教程-FFFFFF.svg)](#编译教程-)
 1. 点击右上角 `Fork`，Fork 本项目到你自己的仓库
+
 2. 创建个人访问令牌，如果已创建请跳过第三步（固件发布会调用，否则无法发布）
+
 3. 点击右上角自己头像 → `Settings` → `Developer settings` → `Personal access tokens` → `Generate new token` Note 名字随便写一个，勾选 `repo` 和 `workflow` 点击最下方绿色按钮 `Generate token` 完成创建
+
 4. 编辑对应文件夹下 `.config` 文件，`luci-app-xxx` 为插件名，结尾 `=y` 为选择，`is not set` 为不选择
+
 5. 插件对应名称及功能请参考恩山网友帖子：[OpenWrt 编译 LuCI -> Applications 添加插件应用说明-L大](https://www.right.com.cn/forum/thread-3682029-1-1.html)
+
 6. 如果需要修改默认 IP、添加或删除插件源以及一些其他自定义设置请在 `diy-part2.sh` 文件中进行修改
+
 7. 点击 `Actions` → `要编译的workflow` → `Run workflow` → `Run workflow` 一次编译大概需要3~5小时
-8. 编译完成后在仓库主页 `Releases` 对应 Tag 标签中查看以及下载
+
+8. 编译完成后在仓库主页 `Releases` 对应 Tag 标签中查看以及下载固件
+
+<details>
+<summary><b>&nbsp;如果你觉得修改 .config 文件麻烦，那么你可以点击此处尝试本地提取</b></summary>
+
+1. 首先安装好 Ubuntu 64bit，推荐 Ubuntu 20.04 LTS x64
+
+2. 命令行输入 `sudo apt-get update`，然后输入
+`sudo apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync`
+
+3. 使用 `git clone https://github.com/coolsnowwolf/lede` 命令下载好源代码，然后 `cd lede` 进入目录
+
+4. 复制 diy-part2.sh 文件内所有内容到命令行，添加自定义插件和自定义设置
+
+5. ```bash
+   ./scripts/feeds update -a
+   ./scripts/feeds install -a
+   make menuconfig
+   ```
+
+6. 选好插件后输入以下命令导出差异部分
+
+   ```bash
+   make defconfig
+   ./scripts/diffconfig.sh > seed.config
+   ```
+
+7. 这样配置的差异部分就写入 seed.config 这个文件了
+   
+   在命令行输入 `cat seed.config` 查看这个文件，也可以用文本编辑器打开
+
+8. 复制 seed.config 文件内所有内容到对应 .config 文件中覆盖就可以了
+
+   **如果不懂编译界面可以参考 YouTube 视频：[软路由固件 OpenWrt 编译界面设置](https://www.youtube.com/watch?v=jEE_J6-4E3Y&list=WL&index=7)**
+</details>
+
+
+## 文件说明 [![](https://img.shields.io/badge/-仓库目录文件说明-FFFFFF.svg)](#文件说明-)
+```
+ OpenWrt
+ ├── .github/workflows
+ │   ├── ARMv8-Package.yml                      # 用编译好的 ARMv8 临时固件进行打包
+ │   ├── ARMv8_Mini-OpenWrt.yml                 # ARM 盒子精简版本 OpenWrt 固件编译与打包
+ │   ├── ARMv8_Plus-OpenWrt.yml                 # ARM 盒子多功能版 OpenWrt 固件编译与打包
+ │   ├── NanoPi_R2C-OpenWrt.yml                 # NanoPi_R2C OpenWrt 固件编译
+ │   ├── NanoPi_R2S-OpenWrt.yml                 # NanoPi_R2S OpenWrt 固件编译
+ │   ├── NanoPi_R4S-OpenWrt.yml                 # NanoPi_R4S OpenWrt 固件编译
+ │   ├── X86_64-OpenWrt.yml                     # X86_64 OpenWrt 固件编译
+ │   └── Delete-Older-Artifacts.yml             # 删除旧版本和工件
+ │
+ ├── armv8                                      # ARM 盒子相关代码文件
+ │   ├── mini
+ │   │   ├── .config                            # ARM 盒子精简版配置文件
+ │   │   ├── diy-part1.sh                       # DIY 脚本第1部分
+ │   │   └── diy-part2.sh                       # DIY 脚本第2部分
+ │   └── plus
+ │       ├── .config                            # ARM 盒子多功能版配置文件
+ │       ├── diy-part1.sh                       # DIY 脚本第1部分
+ │       └── diy-part2.sh                       # DIY 脚本第2部分
+ │
+ ├── nanopi                                     # R2C、R2S、R4S 相关代码文件
+ │   ├── r2c.config                             # R2C 配置文件
+ │   ├── r2s.config                             # R2S 配置文件
+ │   ├── r4s.config                             # R4S 配置文件
+ │   ├── diy-part1.sh                           # DIY 脚本第1部分
+ │   └── diy-part2.sh                           # DIY 脚本第2部分
+ │
+ ├── x86                                        # X86 软路由相关代码文件
+ │   ├── .config                                # X86 配置文件
+ │   ├── diy-part1.sh                           # DIY 脚本第1部分
+ │   └── diy-part2.sh                           # DIY 脚本第2部分
+ │
+ ├── LICENSE                                    # 许可文件
+ └── README.md                                  # 自述文件
+```
 
 
 ## 特别提示 [![](https://img.shields.io/badge/-个人免责声明-FFFFFF.svg)](#特别提示-)
@@ -225,11 +306,12 @@
 
 
 ## 鸣谢 [![](https://img.shields.io/badge/-跪谢各大佬-FFFFFF.svg)](#鸣谢-)
-- [flippy](https://github.com/unifreq/openwrt_packit)
-- [ophub](https://github.com/ophub/op)
-- [P3TERX](https://github.com/P3TERX/Actions-OpenWrt)
-- [breakings](https://github.com/breakings/OpenWrt)
-- [coolsnowwolf](https://github.com/coolsnowwolf/lede)
+| [ImmortalWrt](https://github.com/immortalwrt) | [coolsnowwolf](https://github.com/coolsnowwolf) | [P3TERX](https://github.com/P3TERX) | [Flippy](https://github.com/unifreq) |
+| :-------------: | :-------------: | :-------------: | :-------------: |
+| <img width="100" src="https://avatars.githubusercontent.com/u/53193414"/> | <img width="100" src="https://avatars.githubusercontent.com/u/31687149"/> | <img width="100" src="https://avatars.githubusercontent.com/u/25927179"/> | <img width="100" src="https://avatars.githubusercontent.com/u/39355261"/> |
+| [Ophub](https://github.com/ophub) | [Jerrykuku](https://github.com/jerrykuku) | [QiuSimons](https://github.com/QiuSimons) | [IvanSolis1989](https://github.com/IvanSolis1989) |
+| <img width="100" src="https://avatars.githubusercontent.com/u/68696949"/> | <img width="100" src="https://avatars.githubusercontent.com/u/9485680"/> | <img width="100" src="https://avatars.githubusercontent.com/u/45143996"/> | <img width="100" src="https://avatars.githubusercontent.com/u/44228691"/> |
+
 
 <a href="#readme">
 <img src="https://img.shields.io/badge/-返回顶部-FFFFFF.svg" title="返回顶部" align="right"/>
